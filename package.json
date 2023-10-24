@@ -23,7 +23,7 @@
     "recoil": "^0.7.7"
   },
   "scripts": {
-    "dev": "parcel",
+    "dev": "parcel --no-cache",
     "build": "parcel build"
   }
 }

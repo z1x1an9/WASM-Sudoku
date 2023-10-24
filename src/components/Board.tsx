@@ -3,6 +3,7 @@ import { useRecoilState } from "recoil";
 import { LastOperationAtom } from "../store/atoms";
 import { OpTypes } from '../constants/OpTypes';
 import { IBoardElement } from '../constants/IBoardElement';
+import { createBoard } from '../utils/createBoard';
 
 export const Board: React.FC<{}> = () => {
   const [boardState, setBoardState] = useState([] as IBoardElement[][]);
@@ -25,16 +26,35 @@ export const Board: React.FC<{}> = () => {
   const generateNewBoard = () => {
     const state: IBoardElement[][] = [];
 
+    const newBoard = createBoard();
+    console.log("create!");
+    console.log(newBoard);
+
     for (let i = 0; i < 9; i++) {
       const cur: IBoardElement[] = [];
 
+      // for (let j = 0; j < 9; j++) {
+      //   const prob = Math.random();
+      //   if (prob > 0.7) {
+      //     cur.push({ element: Math.floor(Math.random() * 9) + 1, disabled: true });
+      //   } else {
+      //     cur.push({ element: 0, disabled: false });
+      //   }
+      // }
+      console.log(JSON.stringify(cur));
       for (let j = 0; j < 9; j++) {
-        const prob = Math.random();
-        if (prob > 0.7) {
-          cur.push({ element: Math.floor(Math.random() * 9) + 1, disabled: true });
-        } else {
-          cur.push({ element: 0, disabled: false });
-        }
+        // cur is the ith 3x3 box with j as the index 
+        // 0,1,2,
+        // 3,4,5,
+        // 6,7,8,
+        const row = Math.floor(i / 3) * 3 + Math.floor(j / 3)
+        const col = i % 3 * 3 + j % 3
+        // if (newBoard[row][col] > 0) {
+        //   cur.push({ element: newBoard[row][col], disabled: false });
+        // } else {
+        //   cur.push({ element: newBoard[row][col], disabled: true });
+        // }
+        cur.push({ element: newBoard[row][col], disabled: true });
       }
 
       state.push(cur);
