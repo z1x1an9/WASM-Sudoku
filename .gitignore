@@ -4,5 +4,4 @@ yarn.lock
 dist
 .postcssrc
 tailwind.config.js
-package-lock.json
 
