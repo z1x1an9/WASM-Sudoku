@@ -4,6 +4,8 @@ import { LastOperationAtom } from "../store/atoms";
 import { OpTypes } from '../constants/OpTypes';
 import { IBoardElement } from '../constants/IBoardElement';
 import { createBoard } from '../utils/createBoard';
+import { autoSolve } from "../utils/autoSolve";
+import { arrayToBox, boxToArray } from "../utils/converters";
 
 export const Board: React.FC<{}> = () => {
   const [boardState, setBoardState] = useState([] as IBoardElement[][]);
@@ -15,6 +17,11 @@ export const Board: React.FC<{}> = () => {
         generateNewBoard();
         break;
       case OpTypes.AUTO_SOLVE:
+        // console.log("last payload:" + lastOps.last_ops)
+        const res = autoSolve(boardState);
+        console.log(JSON.stringify(boardState))
+        setBoardState(res)
+        break;
       case OpTypes.HINT_ONE_STEP:
         fillBoard(lastOps.payload);
         break;
@@ -59,6 +66,9 @@ export const Board: React.FC<{}> = () => {
 
       state.push(cur);
     }
+
+    console.log("array to box: " + JSON.stringify(arrayToBox(newBoard)))
+    console.log("box to array: " + JSON.stringify(boxToArray(state)[0]))
 
     setBoardState(state);
   }
