@@ -13,26 +13,37 @@ const autoSolve = (board : IBoardElement[][]) : IBoardElement[][] => {
     return board;
 }
 
+
 const solve = (board : IBoardElement[][]) : boolean => {   
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[0].length; j++) {
-            if (!board[i][j].disabled) {
-                // handle partially solved situation by checking user input first
-                const currElem = board[i][j].element;
-                if (currElem !== 0 && isValid(board, i, j, currElem)) {
-                    board[i][j].disabled = true;
-                    if (solve(board)) return true;
-                    board[i][j].disabled = false;
-                } else {
-                    for (let num = 1; num <= 9; num++) {
-                        if (isValid(board, i, j, num)) {
-                            board[i][j].element = num;
-                            if (solve(board)) return true;
-                            board[i][j].element = 0;
-                        }
+            // if (!board[i][j].disabled) {
+            //     // handle partially solved situation by checking user input first
+            //     const currElem = board[i][j].element;
+            //     if (currElem !== 0 && isValid(board, i, j, currElem)) {
+            //         board[i][j].disabled = true;
+            //         if (solve(board)) return true;
+            //         board[i][j].disabled = false;
+            //     } else {
+            //         for (let num = 1; num <= 9; num++) {
+            //             if (isValid(board, i, j, num)) {
+            //                 board[i][j].element = num;
+            //                 if (solve(board)) return true;
+            //                 board[i][j].element = 0;
+            //             }
+            //         }
+            //         return false;
+            //     }
+            // }
+            if(board[i][j].element === 0) {
+                for (let num = 1; num <= 9; num++) {
+                    if (isValid(board, i, j, num)) {
+                        board[i][j].element = num;
+                        if (solve(board)) return true;
+                        board[i][j].element = 0;
                     }
-                    return false;
                 }
+                return false;
             }
         }
     }
