@@ -2,7 +2,7 @@ const dim = 9;
 const board = [];
 const boxes = [];
 const visited = [];
-const reveal_cells = 50;
+const reveal_cells = 80;
 
 createEmptyBoard();
 
