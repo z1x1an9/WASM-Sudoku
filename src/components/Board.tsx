@@ -56,12 +56,12 @@ export const Board: React.FC<{}> = () => {
         // 6,7,8,
         const row = Math.floor(i / 3) * 3 + Math.floor(j / 3)
         const col = i % 3 * 3 + j % 3
-        // if (newBoard[row][col] > 0) {
-        //   cur.push({ element: newBoard[row][col], disabled: false });
-        // } else {
-        //   cur.push({ element: newBoard[row][col], disabled: true });
-        // }
-        cur.push({ element: newBoard[row][col], disabled: true });
+        if (newBoard[row][col] > 0) {
+          cur.push({ element: newBoard[row][col], disabled: false });
+        } else {
+          cur.push({ element: newBoard[row][col], disabled: true });
+        }
+        // cur.push({ element: newBoard[row][col], disabled: true });
       }
 
       state.push(cur);

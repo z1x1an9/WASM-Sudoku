@@ -2,14 +2,13 @@ const dim = 9;
 const board = [];
 const boxes = [];
 const visited = [];
+const reveal_cells = 50;
 
 createEmptyBoard();
 
-
-
 export function createBoard() {
   console.log("Creating Board");
-  initBoard();
+  clearBoard();
   console.log("Init");
   console.log(JSON.stringify(board));
   // console.log(boxes);
@@ -17,17 +16,16 @@ export function createBoard() {
   console.log("Complete");
   console.log(board);
   // console.log(boxes);
-  const reveal_cells = 80;
   const final_board = JSON.parse(JSON.stringify(board)); // deep copy
-  prepareBoard(reveal_cells, final_board);
+  prepareFinalBoard(reveal_cells, final_board);
   console.log("Prepare");
   console.log(final_board);
   return final_board;
 }
 
-function prepareBoard(reavel_cells, final_board) {
-  const l = reavel_cells;
+function prepareFinalBoard(reavel_cells, final_board) {
   const indice = new Set();
+  // get random position indices to reveal
   while (indice.size < reavel_cells) {
     indice.add(getRandomInt(81) - 1);
   }
@@ -54,7 +52,7 @@ function createEmptyBoard() {
   }
 }
 
-function initBoard() {
+function clearBoard() {
   for (let i = 0; i < dim; i++) {
     boxes[i].clear();
     for (let j = 0; j < dim; j++) {
