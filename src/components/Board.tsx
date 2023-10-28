@@ -19,7 +19,7 @@ export const Board: React.FC<{}> = () => {
       case OpTypes.AUTO_SOLVE:
         // console.log("last payload:" + lastOps.last_ops)
         const res = autoSolve(boardState);
-        console.log(JSON.stringify(boardState))
+        console.log(JSON.stringify(res))
         setBoardState(res)
         break;
       case OpTypes.HINT_ONE_STEP:
@@ -78,14 +78,20 @@ export const Board: React.FC<{}> = () => {
   }
 
   const handleInput = (e: any) => {
+    console.log('input: ' + e.target.value)
+    console.log('type ' + typeof e.target.value)
     let value = Number(e.target.value);
-    if (value === 0) {
+    if (!e.target.value || value <= 0 || value >= 10) {
+      value = 0;
       e.target.value = '';
-      return;
     }
-    if (value > 10) {
-      value %= 10;
-    }
+    // if (value === 0 || value >= 10) {
+    //   return;
+    // }
+    // if (value > 10) {
+    //   value %= 10;
+    //   console.log('value: '  + value)
+    // }
     const [row, col] = e.target.id.split('-');
     const newState: IBoardElement[][] = [];
 
@@ -111,7 +117,6 @@ export const Board: React.FC<{}> = () => {
   const renderBoard = () => {
     let boxCount: number = 0;
     let colCount = 0;
-
     return boardState.map((box: IBoardElement[]) => {
       colCount = 0;
       boxCount++;
@@ -122,11 +127,12 @@ export const Board: React.FC<{}> = () => {
             if (num.disabled) {
               return (
                 <div key={`${boxCount}-${colCount}`} id={`${boxCount}-${colCount}`} className='text-center grid content-center justify-center border-solid border border-[#F0F3F9] font-bold'>
-                  <span className='select-none'>{num.element == 0 ? '' : num.element}</span>
+                  <span className='select-none'>{num.element}</span>
                 </div>
               )
             } else {
               const value = boardState[boxCount - 1][colCount - 1].element;
+              console.log(value)
               return (
                 <input key={`${boxCount}-${colCount}`} id={`${boxCount}-${colCount}`} className='text-center grid content-center justify-center border-solid border border-[#F0F3F9] font-bold' defaultValue={value === 0 ? '' : String(value)} onInput={handleInput} />
               )

@@ -13,6 +13,10 @@ const autoSolve = (board : IBoardElement[][]) : IBoardElement[][] => {
     return board;
 }
 
+const checkStep = (board : IBoardElement[][]) : boolean => {
+    board = boxToArray(board);
+    return solve(board);
+}
 
 const solve = (board : IBoardElement[][]) : boolean => {   
     for (let i = 0; i < board.length; i++) {
