@@ -34,3 +34,29 @@ export const boxToArray = (box: IBoardElement[][]): IBoardElement[][] => {
     }
     return res;
   };
+
+
+  export const deepCopyBoard = (board: IBoardElement[][]): IBoardElement[][] => {
+    const res: IBoardElement[][] = [];
+    for (let i = 0; i < 9; i++) {
+      const cur: IBoardElement[] = [];
+      for (let j = 0; j < 9; j++) {
+        cur.push({ element: board[i][j].element, disabled: board[i][j].disabled, valid: board[i][j].valid });
+      }
+      res.push(cur);
+    }
+    return res;
+  };
+
+  
+  export const copyBoard = (board: IBoardElement[][]): IBoardElement[][] => {
+    const res: IBoardElement[][] = [];
+    for (let i = 0; i < 9; i++) {
+      const cur: IBoardElement[] = [];
+      for (let j = 0; j < 9; j++) {
+        cur.push(board[i][j]);
+      }
+      res.push(cur);
+    }
+    return res;
+  };

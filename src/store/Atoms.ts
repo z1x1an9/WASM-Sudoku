@@ -7,6 +7,7 @@ export const LastOperationAtom = atom({
   default: {
     'last_ops': OpTypes.NULL,
     'payload': [] as IBoardElement[][],
-    'compute_time': 0
+    'compute_time': 0,
+    'last_pos': [] as number[],
   }
 });
