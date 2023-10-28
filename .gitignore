@@ -2,6 +2,4 @@
 node_modules
 yarn.lock
 dist
-.postcssrc
-tailwind.config.js
 
