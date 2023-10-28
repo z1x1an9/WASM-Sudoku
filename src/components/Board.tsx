@@ -30,9 +30,6 @@ export const Board: React.FC<{}> = () => {
         const i = lastOps.last_pos[0];
         const j = lastOps.last_pos[1];
         console.log("last_ops", i, j);
-        if (boardState[i][j].element === 0) {
-          break;
-        }
         const check = checkMove(boardState);
         if (!check) {
           const newState = copyBoard(boardState);
@@ -85,8 +82,10 @@ export const Board: React.FC<{}> = () => {
 
   const handleInput = (e: any) => {
     let value = Number(e.target.value);
+    let ifCheckMove = true;
     if (isNaN(value) || value >= 10 || value < 0) {
       value = 0;
+      ifCheckMove = false
     }
     const [row, col] = e.target.id.split('-');
     const i = Number(row) - 1;
@@ -94,12 +93,12 @@ export const Board: React.FC<{}> = () => {
     const newState: IBoardElement[][] = copyBoard(boardState);
     newState[i][j] = { element: value, disabled: false, valid: true };
     setBoardState(newState);
-    setLastOps({
+    if (ifCheckMove) setLastOps({
       last_ops: OpTypes.CHECK_MOVE,
       payload: [],
       compute_time: 100,
       last_pos: [i, j]
-    })
+    });
   }
 
   const renderBoard = () => {
