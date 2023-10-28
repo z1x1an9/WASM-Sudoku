@@ -4,7 +4,7 @@ import { LastOperationAtom } from "../store/atoms";
 import { OpTypes } from '../constants/OpTypes';
 import { IBoardElement } from '../constants/IBoardElement';
 import { createBoard } from '../utils/createBoard';
-import { autoSolve } from "../utils/autoSolve";
+import { autoSolve, checkStep } from "../utils/autoSolve";
 import { arrayToBox, boxToArray } from "../utils/converters";
 
 export const Board: React.FC<{}> = () => {
@@ -25,6 +25,11 @@ export const Board: React.FC<{}> = () => {
       case OpTypes.HINT_ONE_STEP:
         fillBoard(lastOps.payload);
         break;
+      case OpTypes.CHECK_MOVE:
+        // if(!checkStep(boardState)) {
+        //   //TODO: if invalid step, alert
+        // }
+        break;
       default:
         break;
     }
@@ -32,7 +37,6 @@ export const Board: React.FC<{}> = () => {
 
   const generateNewBoard = () => {
     const state: IBoardElement[][] = [];
-
     const newBoard = createBoard();
     console.log("create!");
     console.log(newBoard);
@@ -81,9 +85,11 @@ export const Board: React.FC<{}> = () => {
     console.log('input: ' + e.target.value)
     console.log('type ' + typeof e.target.value)
     let value = Number(e.target.value);
+    let ifCheckMove = true;
     if (!e.target.value || value <= 0 || value >= 10) {
       value = 0;
       e.target.value = '';
+      ifCheckMove = false
     }
     // if (value === 0 || value >= 10) {
     //   return;
@@ -107,11 +113,14 @@ export const Board: React.FC<{}> = () => {
 
     newState[Number(row) - 1][Number(col) - 1] = { element: value, disabled: false };
     setBoardState(newState);
-    setLastOps({
-      last_ops: OpTypes.CHECK_MOVE,
-      payload: [],
-      compute_time: 100
-    })
+    if (ifCheckMove) {
+      setLastOps({
+        last_ops: OpTypes.CHECK_MOVE,
+        payload: [],
+        compute_time: 100
+      })
+    }
+    
   }
 
   const renderBoard = () => {
@@ -132,9 +141,8 @@ export const Board: React.FC<{}> = () => {
               )
             } else {
               const value = boardState[boxCount - 1][colCount - 1].element;
-              console.log(value)
               return (
-                <input key={`${boxCount}-${colCount}`} id={`${boxCount}-${colCount}`} className='text-center grid content-center justify-center border-solid border border-[#F0F3F9] font-bold' defaultValue={value === 0 ? '' : String(value)} onInput={handleInput} />
+                <input key={`${boxCount}-${colCount}`} id={`${boxCount}-${colCount}`} className='text-center grid content-center justify-center border-solid border border-[#F0F3F9] font-bold' value={value === 0 ? '' : String(value)} onInput={handleInput} />
               )
             }
           })}

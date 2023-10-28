@@ -66,4 +66,4 @@ const isValid = (board : IBoardElement[][], row : number, col : number, num : nu
     return true
 }
 
-export { autoSolve }
+export { autoSolve , checkStep}
