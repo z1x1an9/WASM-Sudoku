@@ -11,3 +11,11 @@ export const LastOperationAtom = atom({
     'last_pos': [] as number[],
   }
 });
+
+export const MeasuredOperationAtom = atom({
+  key: 'measuredOperation',
+  default: {
+    'measured_ops': OpTypes.NULL,
+    'compute_time': 0,
+  }
+});

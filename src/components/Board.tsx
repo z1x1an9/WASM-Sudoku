@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { LastOperationAtom } from "../store/atoms";
+import { LastOperationAtom, MeasuredOperationAtom } from "../store/atoms";
 import { OpTypes } from '../constants/OpTypes';
 import { IBoardElement } from '../constants/IBoardElement';
 import { createBoard } from '../utils/createBoard';
@@ -10,6 +10,7 @@ import { arrayToBox, boxToArray, copyBoard } from "../utils/converters";
 export const Board: React.FC<{}> = () => {
   const [boardState, setBoardState] = useState([] as IBoardElement[][]);
   const [lastOps, setLastOps] = useRecoilState(LastOperationAtom);
+  const [measuredOps, setMeasuredOps] = useRecoilState(MeasuredOperationAtom);
 
   useEffect(() => {
     switch (lastOps.last_ops) {
@@ -18,9 +19,17 @@ export const Board: React.FC<{}> = () => {
         break;
       case OpTypes.AUTO_SOLVE:
         // console.log("last payload:" + lastOps.last_ops)
+        var start = window.performance.now();
+        console.log("start", start);
         const res = autoSolve(boardState);
-        console.log(JSON.stringify(boardState));
+        var end = window.performance.now();
+        console.log("end", end);
+        //console.log(JSON.stringify(boardState));
         setBoardState(res);
+        setMeasuredOps({
+          measured_ops: lastOps.last_ops,
+          compute_time: Math.round(end - start),
+        });
         break;
       case OpTypes.HINT_ONE_STEP:
         fillBoard(lastOps.payload);
@@ -66,7 +75,6 @@ export const Board: React.FC<{}> = () => {
         }
         // cur.push({ element: newBoard[row][col], disabled: true });
       }
-
       state.push(cur);
     }
 
@@ -120,7 +128,7 @@ export const Board: React.FC<{}> = () => {
               )
             } else {
               const value = boardState[boxCount - 1][colCount - 1].element;
-              console.log(boxCount - 1, colCount - 1, value);
+              // console.log(boxCount - 1, colCount - 1, value);
 
               if (num.valid) {
                 return (

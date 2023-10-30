@@ -18,6 +18,7 @@ const autoSolve = (board : IBoardElement[][]) : IBoardElement[][] => {
     return curBoard;
 }
 
+// check if the current board has a solution
 const checkMove = (board : IBoardElement[][]) : boolean => {
     let curBoard = deepCopyBoard(board)
     curBoard = boxToArray(curBoard);
@@ -29,8 +30,9 @@ const checkMove = (board : IBoardElement[][]) : boolean => {
     return check;
 }
 
+// check if the input board is valid (no conflict for filled cell), regardless of solution
 const checkBoard = (board : IBoardElement[][]) : boolean => {
-    console.log(JSON.stringify(board));
+    // console.log(JSON.stringify(board));
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[0].length; j++) {
             // console.log(i, j, board[i][j].element);
