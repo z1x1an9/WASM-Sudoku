@@ -16,8 +16,8 @@ export const Footer: React.FC<{}> = () => {
           </button>
         </div>
         <div className='flex py-2 justify-center'>
-          <button className='px-3 py-2 w-fit border-2 rounded-3xl border-sky-500 text-sky-500 hover:bg-sky-500 hover:text-white' onClick={() => setLastOps({ last_ops: OpTypes.HINT_ONE_STEP, payload: [], compute_time: 0, last_pos: [] })}>
-            <span>One Step Hint</span>
+          <button className='px-3 py-2 w-fit border-2 rounded-3xl border-sky-500 text-sky-500 hover:bg-sky-500 hover:text-white' onClick={() => setLastOps({ last_ops: OpTypes.RESTART_GAME, payload: [], compute_time: 0, last_pos: [] })}>
+            <span>Restart Game</span>
           </button>
         </div>
         <div className='flex  py-2 justify-center'>

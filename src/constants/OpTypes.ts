@@ -3,5 +3,6 @@ export enum OpTypes {
   HINT_ONE_STEP = "Hint One Step",
   AUTO_SOLVE = "Auto Solve",
   CHECK_MOVE = "Check Move",
+  RESTART_GAME = "Restart Game",
   NULL = "Null"
 }

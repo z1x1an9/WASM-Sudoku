@@ -5,12 +5,13 @@ import { OpTypes } from '../constants/OpTypes';
 import { IBoardElement } from '../constants/IBoardElement';
 import { createBoard } from '../utils/createBoard';
 import { autoSolve, checkMove } from "../utils/autoSolve";
-import { arrayToBox, boxToArray, copyBoard } from "../utils/converters";
+import { arrayToBox, boxToArray, copyBoard, deepCopyBoard } from "../utils/converters";
 
 export const Board: React.FC<{}> = () => {
   const [boardState, setBoardState] = useState([] as IBoardElement[][]);
   const [lastOps, setLastOps] = useRecoilState(LastOperationAtom);
   const [measuredOps, setMeasuredOps] = useRecoilState(MeasuredOperationAtom);
+  const [initialBoardState, setInitialBoardState] = useState([] as IBoardElement[][]);
 
   useEffect(() => {
     switch (lastOps.last_ops) {
@@ -46,6 +47,10 @@ export const Board: React.FC<{}> = () => {
           setBoardState(newState);
         }
         break;
+      case OpTypes.RESTART_GAME:
+        console.log(JSON.stringify(initialBoardState));
+        setBoardState(initialBoardState);
+        break;
       default:
         break;
     }
@@ -60,7 +65,7 @@ export const Board: React.FC<{}> = () => {
 
     for (let i = 0; i < 9; i++) {
       const cur: IBoardElement[] = [];
-      console.log(JSON.stringify(cur));
+      //console.log(JSON.stringify(cur));
       for (let j = 0; j < 9; j++) {
         // cur is the ith 3x3 box with j as the index 
         // 0,1,2,
@@ -82,6 +87,7 @@ export const Board: React.FC<{}> = () => {
     console.log("box to array: " + JSON.stringify(boxToArray(state)[0]))
 
     setBoardState(state);
+    setInitialBoardState(state);
   }
 
   const fillBoard = (board: IBoardElement[][]) => {
