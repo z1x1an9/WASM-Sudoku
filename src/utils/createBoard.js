@@ -7,19 +7,19 @@ const reveal_cells = 20;
 createEmptyBoard();
 
 export function createBoard() {
-  console.log("Creating Board");
+  // console.log("Creating Board");
   clearBoard();
   console.log("Init");
   console.log(JSON.stringify(board));
   // console.log(boxes);
   backtrack(0, 0);
-  console.log("Complete");
-  console.log(board);
+  console.log("Create Board Complete");
+  console.log(JSON.stringify(board));
   // console.log(boxes);
   const final_board = JSON.parse(JSON.stringify(board)); // deep copy
   prepareFinalBoard(reveal_cells, final_board);
   console.log("Prepare");
-  console.log(final_board);
+  console.log(JSON.stringify(final_board));
   return final_board;
 }
 

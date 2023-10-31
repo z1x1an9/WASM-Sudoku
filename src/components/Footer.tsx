@@ -26,7 +26,7 @@ export const Footer: React.FC<{}> = () => {
           </button>
         </div>
       </div>
-      <span>Measured Operation: {measuredOps.measured_ops}, Time to compute: {measuredOps.compute_time} ms</span>
+      <span className='text-xl'>Measured Operation: {measuredOps.measured_ops}, Time to compute: {measuredOps.compute_time} ms</span>
     </div>
   )
 }

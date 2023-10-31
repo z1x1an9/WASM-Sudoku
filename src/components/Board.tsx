@@ -83,8 +83,8 @@ export const Board: React.FC<{}> = () => {
       state.push(cur);
     }
 
-    console.log("array to box: " + JSON.stringify(arrayToBox(newBoard)))
-    console.log("box to array: " + JSON.stringify(boxToArray(state)[0]))
+    // console.log("array to box: " + JSON.stringify(arrayToBox(newBoard)))
+    // console.log("box to array: " + JSON.stringify(boxToArray(state)[0]))
 
     setBoardState(state);
     setInitialBoardState(state);
@@ -128,7 +128,7 @@ export const Board: React.FC<{}> = () => {
             colCount++;
             if (num.disabled) {
               return (
-                <div key={`${boxCount}-${colCount}`} id={`${boxCount}-${colCount}`} className='text-center grid content-center justify-center border-solid border border-[#F0F3F9] font-bold'>
+                <div key={`${boxCount}-${colCount}`} id={`${boxCount}-${colCount}`} className='text-2xl text-center grid content-center justify-center border-solid border border-[#F0F3F9] font-bold'>
                   <span className='select-none'>{num.element}</span>
                 </div>
               )
@@ -138,11 +138,11 @@ export const Board: React.FC<{}> = () => {
 
               if (num.valid) {
                 return (
-                  <input key={`${boxCount}-${colCount}`} id={`${boxCount}-${colCount}`} className='text-center grid content-center justify-center border-solid border border-[#F0F3F9] font-bold' value={value === 0 ? '' : String(value)} onInput={handleInput} />
+                  <input key={`${boxCount}-${colCount}`} id={`${boxCount}-${colCount}`} className='text-2xl text-center grid content-center justify-center border-solid border border-[#F0F3F9] font-bold' value={value === 0 ? '' : String(value)} onInput={handleInput} />
                 )
               } else {
                 return (
-                  <input key={`${boxCount}-${colCount}`} id={`${boxCount}-${colCount}`} className='text-center grid content-center justify-center border-solid border border-[#F0F3F9] bg-red-300 font-bold' value={value === 0 ? '' : String(value)} onInput={handleInput} />
+                  <input key={`${boxCount}-${colCount}`} id={`${boxCount}-${colCount}`} className='text-2xl text-center grid content-center justify-center border-solid border border-[#F0F3F9] bg-red-300 font-bold' value={value === 0 ? '' : String(value)} onInput={handleInput} />
                 )
               }
             }
