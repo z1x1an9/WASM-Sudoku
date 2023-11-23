@@ -1,9 +1,12 @@
 import { IBoardElement } from '../constants/IBoardElement';
 import { createBoard } from './createBoard';
 import { arrayToBox, boxToArray, deepCopyBoard } from "../utils/converters";
-
+import init, { greet } from "../../rust-wasm/pkg/rust_wasm.js";
 
 const autoSolve = (board : IBoardElement[][]) : IBoardElement[][] => {
+    init().then(() => {
+        greet("WebAssembly");
+      });
     let curBoard = deepCopyBoard(board)
     curBoard = boxToArray(curBoard);
     console.log("Started checking...")
