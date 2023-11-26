@@ -4,7 +4,7 @@ import { LastOperationAtom, MeasuredOperationAtom } from "../store/atoms";
 import { OpTypes } from '../constants/OpTypes';
 import { IBoardElement } from '../constants/IBoardElement';
 import { createBoard } from '../utils/createBoard';
-import { autoSolve, checkMove } from "../utils/autoSolve";
+import { autoSolve, checkMove, autoSolveGC, autoSolveRust } from "../utils/autoSolve";
 import { arrayToBox, boxToArray, copyBoard, deepCopyBoard } from "../utils/converters";
 
 export const Board: React.FC<{}> = () => {
@@ -22,10 +22,11 @@ export const Board: React.FC<{}> = () => {
         // console.log("last payload:" + lastOps.last_ops)
         var start = window.performance.now();
         console.log("start", start);
-        const res = autoSolve(boardState);
+        // const res = autoSolve(boardState);
+        const res = autoSolveRust(boardState);
         var end = window.performance.now();
         console.log("end", end);
-        //console.log(JSON.stringify(boardState));
+        console.log(boardState);
         setBoardState(res);
         setMeasuredOps({
           measured_ops: lastOps.last_ops,

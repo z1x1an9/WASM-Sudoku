@@ -1,12 +1,9 @@
 import { IBoardElement } from '../constants/IBoardElement';
 import { createBoard } from './createBoard';
 import { arrayToBox, boxToArray, deepCopyBoard } from "../utils/converters";
-import init, { greet } from "../../rust-wasm/pkg/rust_wasm.js";
+import init, { solve_rust } from '../../rust-wasm/pkg/rust_wasm.js';
 
 const autoSolve = (board : IBoardElement[][]) : IBoardElement[][] => {
-    init().then(() => {
-        greet("WebAssembly");
-      });
     let curBoard = deepCopyBoard(board)
     curBoard = boxToArray(curBoard);
     console.log("Started checking...")
@@ -67,6 +64,98 @@ const solve = (board : IBoardElement[][]) : boolean => {
     return true
 }
 
+const autoSolveGC = (board : IBoardElement[][]) : IBoardElement[][] => {
+    let curBoard = deepCopyBoard(board)
+    curBoard = boxToArray(curBoard);
+    console.log("Started checking...")
+    let check = checkBoard(curBoard)
+    console.log("CheckBoard in autoSolve", check);
+    if (check) {
+        console.log("Started solving...")
+        solveGC(curBoard);
+        console.log("Finished solving.")
+    }
+    curBoard = arrayToBox(curBoard);
+    return curBoard;
+}
+
+
+const solveGC = (board: IBoardElement[][]) : boolean => {
+    // prepare the first list
+    let curList: number[][][] = [];
+    let dim: number = 9;
+
+    // copy to a an integer array 
+    let array2D: number[][] = [];
+    for (let i = 0; i < dim; i++) {
+      const row: number[] = [];
+      for (let j = 0; j < dim; j++) {
+        row.push(board[i][j].element);
+      }
+      array2D.push(row);
+    }
+    curList.push(array2D);
+    // use BFS to find all solutions
+    for (let i = 0; i < dim; i++) {
+        for (let j = 0; j < dim; j++) {
+            if (curList.length > 0) { 
+                let firstBoard: number[][] = curList[0];
+                if (firstBoard[i][j] > 0) continue; // skip the filled cell
+                let newList: number[][][] = [];
+                for (let k = 0; k < curList.length; k ++) {
+                    for (let v = 1; v < dim + 1; v++) {
+                        if (isValidNumber(curList[k], i, j, v)) {
+                            let newBoard: number[][] = deepCopy2DNumberArray(curList[k]);
+                            newBoard[i][j] = v;
+                            newList.push(newBoard);
+                        }
+                    }
+                }
+                curList = newList;
+            } else {
+                return false;
+            }       
+        }
+    }
+    // no solution found 
+    if (curList.length == 0) {
+        return false; 
+    } 
+    // load the first answer back to board, then return true
+    for (let i = 0; i < dim; i++) {
+        for (let j = 0; j < dim; j++) {
+            if (board[i][j].element == 0) board[i][j].element = curList[0][i][j];
+        }
+    }
+    console.log(JSON.stringify(curList[0]));
+    console.log("number of solution", curList.length);
+    return true;
+}
+
+const deepCopy2DNumberArray = (board: number[][]) : number[][] => {
+    const res: number[][] = [];
+    for (let i = 0; i < 9; i++) {
+      const row: number[] = [];
+      for (let j = 0; j < 9; j++) {
+        row.push(board[i][j]);
+      }
+      res.push(row);
+    }
+    return res;
+}
+
+const isValidNumber = (board: number[][], row : number, col: number, val : number ) : boolean => {
+    for (let i = 0; i < board.length; i++) {
+        if (board[i][col] !== 0 && board[i][col] === val) return false; // check row
+        if (board[row][i] !== 0 && board[row][i] === val) return false; // check column
+        if (
+            board[3 * Math.floor(row / 3) + Math.floor(i / 3)][3 * Math.floor(col / 3) + (i % 3)] !== 0 &&
+            board[3 * Math.floor(row / 3) + Math.floor(i / 3)][3 * Math.floor(col / 3) + (i % 3)] === val
+        ) return false; // check 3*3 block
+    }
+    return true
+}
+
 const isValid = (board : IBoardElement[][], row : number, col : number, num : number) : boolean => {
     for (let i = 0; i < board.length; i++) {
         if (board[i][col].element !== 0 && board[i][col].element === num) return false; // check row
@@ -95,4 +184,59 @@ const isFilledValid = (board : IBoardElement[][], row : number, col : number) : 
     return true
 }
 
-export { autoSolve, checkMove }
+const autoSolveRust = (board : IBoardElement[][]) : IBoardElement[][] => {
+    let curBoard = deepCopyBoard(board)
+    curBoard = boxToArray(curBoard);
+    console.log("Started checking...")
+    let check = checkBoard(curBoard)
+    console.log("CheckBoard in autoSolve", check);
+    if (check) {
+        console.log("Started solving...")
+        solveRust(curBoard);
+        console.log("Finished solving.")
+    }
+    curBoard = arrayToBox(curBoard);
+    return curBoard;
+}
+
+const solveRust = async (board: IBoardElement[][]) : Promise<boolean> => {
+    let curList: number[][][] = [];
+    let array2D: number[][] = [];
+    let dim: number = 9;
+    for (let i = 0; i < dim; i++) {
+        const row: number[] = [];
+        for (let j = 0; j < dim; j++) {
+            row.push(board[i][j].element);
+        }
+        array2D.push(row);
+    }
+    curList.push(array2D);
+
+    // call rust function to solve
+    const serializedList = JSON.stringify(curList);
+    console.log("JSON.parse(serializedList): " + JSON.parse(serializedList))
+    await init();
+    console.log("wasm inited")
+    
+    // await init().then(() => {
+        curList = solve_rust(JSON.parse(serializedList), dim) as unknown as number[][][];
+        console.log("returned list: " + curList)
+    //   });
+    // curList = solve_rust(JSON.parse(serializedList), dim) as unknown as number[][][];
+    // if no solution found 
+    if (curList.length == 0) {
+        return false; 
+    } 
+    // load the first answer back to board, then return true
+    for (let i = 0; i < dim; i++) {
+        for (let j = 0; j < dim; j++) {
+            if (board[i][j].element == 0) board[i][j].element = curList[0][i][j];
+        }
+    }
+    console.log(JSON.stringify(curList[0]));
+    console.log("number of solution", curList.length);
+    return true;
+}
+
+
+export { autoSolve, checkMove, autoSolveGC, autoSolveRust }
