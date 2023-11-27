@@ -199,7 +199,7 @@ const autoSolveRust = (board : IBoardElement[][]) : IBoardElement[][] => {
     return curBoard;
 }
 
-const solveRust = async (board: IBoardElement[][]) : Promise<boolean> => {
+const solveRust = (board: IBoardElement[][]) : boolean => {
     let curList: number[][][] = [];
     let array2D: number[][] = [];
     let dim: number = 9;
@@ -215,18 +215,19 @@ const solveRust = async (board: IBoardElement[][]) : Promise<boolean> => {
     // call rust function to solve
     const serializedList = JSON.stringify(curList);
     console.log("JSON.parse(serializedList): " + JSON.parse(serializedList))
-    await init();
     console.log("wasm inited")
     
-    // await init().then(() => {
+    init().then(() => {
         curList = solve_rust(JSON.parse(serializedList), dim) as unknown as number[][][];
-        console.log("returned list: " + curList)
-    //   });
+        console.log("returned list: " + curList[0])
+       });
     // curList = solve_rust(JSON.parse(serializedList), dim) as unknown as number[][][];
     // if no solution found 
+    
     if (curList.length == 0) {
         return false; 
     } 
+
     // load the first answer back to board, then return true
     for (let i = 0; i < dim; i++) {
         for (let j = 0; j < dim; j++) {

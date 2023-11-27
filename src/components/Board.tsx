@@ -22,12 +22,13 @@ export const Board: React.FC<{}> = () => {
         // console.log("last payload:" + lastOps.last_ops)
         var start = window.performance.now();
         console.log("start", start);
-        // const res = autoSolve(boardState);
-        const res = autoSolveRust(boardState);
+        const res = autoSolve(boardState);
+        // const res = autoSolveRust(boardState);
         var end = window.performance.now();
         console.log("end", end);
-        console.log(boardState);
         setBoardState(res);
+        console.log('board state: '+ boardState);
+
         setMeasuredOps({
           measured_ops: lastOps.last_ops,
           compute_time: Math.round(end - start),
