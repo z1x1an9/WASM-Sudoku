@@ -184,7 +184,7 @@ const isFilledValid = (board : IBoardElement[][], row : number, col : number) : 
     return true
 }
 
-const autoSolveRust = (board : IBoardElement[][]) : IBoardElement[][] => {
+const autoSolveRust = async (board : IBoardElement[][]) : Promise<IBoardElement[][]> => {
     let curBoard = deepCopyBoard(board)
     curBoard = boxToArray(curBoard);
     console.log("Started checking...")
@@ -192,14 +192,18 @@ const autoSolveRust = (board : IBoardElement[][]) : IBoardElement[][] => {
     console.log("CheckBoard in autoSolve", check);
     if (check) {
         console.log("Started solving...")
-        solveRust(curBoard);
+        await solveRust(curBoard);
         console.log("Finished solving.")
     }
     curBoard = arrayToBox(curBoard);
+    // const boardPromise = new Promise<IBoardElement[][]>((resolve, reject) => {
+    //     // Asynchronous code here
+    //     resolve(b)
+    //   });
     return curBoard;
 }
 
-const solveRust = (board: IBoardElement[][]) : boolean => {
+const solveRust = async (board: IBoardElement[][]) : Promise<boolean> => {
     let curList: number[][][] = [];
     let array2D: number[][] = [];
     let dim: number = 9;
@@ -216,14 +220,16 @@ const solveRust = (board: IBoardElement[][]) : boolean => {
     const serializedList = JSON.stringify(curList);
     console.log("JSON.parse(serializedList): " + JSON.parse(serializedList))
     console.log("wasm inited")
-    
-    init().then(() => {
+    await init();
+    // init().then(() => {
+        console.log('in then')
         curList = solve_rust(JSON.parse(serializedList), dim) as unknown as number[][][];
         console.log("returned list: " + curList[0])
-       });
+    //    });
     // curList = solve_rust(JSON.parse(serializedList), dim) as unknown as number[][][];
     // if no solution found 
-    
+    console.log('after then')
+
     if (curList.length == 0) {
         return false; 
     } 
