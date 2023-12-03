@@ -5,6 +5,7 @@ import { OpTypes } from '../constants/OpTypes';
 import { IBoardElement } from '../constants/IBoardElement';
 import { createBoard } from '../utils/createBoard';
 import { autoSolve, checkMove, autoSolveGC, autoSolveRust } from "../utils/autoSolve";
+
 import { arrayToBox, boxToArray, copyBoard, deepCopyBoard } from "../utils/converters";
 
 export const Board: React.FC<{}> = () => {
@@ -48,7 +49,6 @@ export const Board: React.FC<{}> = () => {
             measured_ops: lastOps.last_ops,
             compute_time: Math.round(end - start),
           });
-        });
         break;
       case OpTypes.AUTO_SOLVE_WASM_GC:
         //TODO add Java with WASM here
