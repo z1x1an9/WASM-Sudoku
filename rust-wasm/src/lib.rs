@@ -40,11 +40,11 @@ pub fn solve_rust(board: JsValue, dim: usize) -> JsValue {
                 cur_list = new_list.clone();
                 solution_found = true;
             } 
-            // else {
-            //     // return JsValue::from_serde(&cur_list).unwrap_or_else(|_| JsValue::NULL);
-            //     // let result_board = Board(cur_list);
-            //     return serde_wasm_bindgen::to_value(&cur_list).unwrap();
-            // }
+            else {
+                // return JsValue::from_serde(&cur_list).unwrap_or_else(|_| JsValue::NULL);
+                // let result_board = Board(cur_list);
+                return serde_wasm_bindgen::to_value(&cur_list).unwrap();
+            }
         }
     }
     // // Debug logging
