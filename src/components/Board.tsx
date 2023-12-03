@@ -49,6 +49,7 @@ export const Board: React.FC<{}> = () => {
             measured_ops: lastOps.last_ops,
             compute_time: Math.round(end - start),
           });
+        });
         break;
       case OpTypes.AUTO_SOLVE_WASM_GC:
         //TODO add Java with WASM here
