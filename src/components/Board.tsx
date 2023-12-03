@@ -24,7 +24,22 @@ export const Board: React.FC<{}> = () => {
         var start = window.performance.now();
         console.log("start", start);
         // const res = autoSolve(boardState);
-        const res = autoSolveRust(boardState).then((res) => {
+        var res = autoSolve(boardState)
+        var end = window.performance.now();
+        console.log("end", end);
+        setBoardState(res);
+        console.log('board state: '+ JSON.stringify(boardState));
+
+        setMeasuredOps({
+          measured_ops: lastOps.last_ops,
+          compute_time: Math.round(end - start),
+        });
+        break;
+      case OpTypes.AUTO_SOLVE_WASM:
+        var start = window.performance.now();
+        console.log("start", start);
+        // const res = autoSolve(boardState);
+        autoSolveRust(boardState).then((res) => {
           var end = window.performance.now();
           console.log("end", end);
           setBoardState(res);
@@ -34,6 +49,9 @@ export const Board: React.FC<{}> = () => {
             measured_ops: lastOps.last_ops,
             compute_time: Math.round(end - start),
           });
+        break;
+      case OpTypes.AUTO_SOLVE_WASM_GC:
+        //TODO add Java with WASM here
         break;
       case OpTypes.HINT_ONE_STEP:
         fillBoard(lastOps.payload);

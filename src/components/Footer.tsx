@@ -22,9 +22,19 @@ export const Footer: React.FC<{}> = () => {
         </div>
         <div className='flex  py-2 justify-center'>
           <button className='px-3 py-2 w-fit border-2 rounded-3xl border-sky-500 text-sky-500 hover:bg-sky-500 hover:text-white' onClick={() => setLastOps({ last_ops: OpTypes.AUTO_SOLVE, payload: [], compute_time: 0, last_pos: [] })}>
-            <span>Auto Solve</span>
+            <span>Auto Solve JS</span>
           </button>
         </div>
+        <div className='flex  py-2 justify-center'>
+          <button className='px-3 py-2 w-fit border-2 rounded-3xl border-sky-500 text-sky-500 hover:bg-sky-500 hover:text-white' onClick={() => setLastOps({ last_ops: OpTypes.AUTO_SOLVE_WASM, payload: [], compute_time: 0, last_pos: [] })}>
+            <span>Auto Solve WASM</span>
+          </button>
+        </div>
+        {/* <div className='flex  py-2 justify-center'>
+          <button className='px-3 py-2 w-fit border-2 rounded-3xl border-sky-500 text-sky-500 hover:bg-sky-500 hover:text-white' onClick={() => setLastOps({ last_ops: OpTypes.AUTO_SOLVE_WASM_GC, payload: [], compute_time: 0, last_pos: [] })}>
+            <span>Auto Solve WASM-GC</span>
+          </button>
+        </div> */}
       </div>
       <span className='text-xl'>Measured Operation: {measuredOps.measured_ops}, Time to compute: {measuredOps.compute_time} ms</span>
     </div>
