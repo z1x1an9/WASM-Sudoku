@@ -1,7 +1,7 @@
 import { IBoardElement } from '../constants/IBoardElement';
 import { createBoard } from './createBoard';
 import { arrayToBox, boxToArray, deepCopyBoard } from "../utils/converters";
-
+import init, { solve_rust } from '../../rust-wasm/pkg/rust_wasm.js';
 
 const autoSolve = (board: IBoardElement[][]): IBoardElement[][] => {
     let curBoard = deepCopyBoard(board)
@@ -186,4 +186,66 @@ const isFilledValid = (board: IBoardElement[][], row: number, col: number): bool
     return true
 }
 
-export { autoSolve, checkMove, autoSolveGC }
+const autoSolveRust = async (board : IBoardElement[][]) : Promise<IBoardElement[][]> => {
+    let curBoard = deepCopyBoard(board)
+    curBoard = boxToArray(curBoard);
+    console.log("Started checking...")
+    let check = checkBoard(curBoard)
+    console.log("CheckBoard in autoSolve", check);
+    if (check) {
+        console.log("Started solving...")
+        await solveRust(curBoard);
+        console.log("Finished solving.")
+    }
+    curBoard = arrayToBox(curBoard);
+    // const boardPromise = new Promise<IBoardElement[][]>((resolve, reject) => {
+    //     // Asynchronous code here
+    //     resolve(b)
+    //   });
+    return curBoard;
+}
+
+const solveRust = async (board: IBoardElement[][]) : Promise<boolean> => {
+    let curList: number[][][] = [];
+    let array2D: number[][] = [];
+    let dim: number = 9;
+    for (let i = 0; i < dim; i++) {
+        const row: number[] = [];
+        for (let j = 0; j < dim; j++) {
+            row.push(board[i][j].element);
+        }
+        array2D.push(row);
+    }
+    curList.push(array2D);
+
+    // call rust function to solve
+    const serializedList = JSON.stringify(curList);
+    console.log("JSON.parse(serializedList): " + JSON.parse(serializedList))
+    console.log("wasm inited")
+    await init();
+    // init().then(() => {
+        console.log('in then')
+        curList = solve_rust(JSON.parse(serializedList), dim) as unknown as number[][][];
+        console.log("returned list: " + curList[0])
+    //    });
+    // curList = solve_rust(JSON.parse(serializedList), dim) as unknown as number[][][];
+    // if no solution found 
+    console.log('after then')
+
+    if (curList.length == 0) {
+        return false; 
+    } 
+
+    // load the first answer back to board, then return true
+    for (let i = 0; i < dim; i++) {
+        for (let j = 0; j < dim; j++) {
+            if (board[i][j].element == 0) board[i][j].element = curList[0][i][j];
+        }
+    }
+    console.log(JSON.stringify(curList[0]));
+    console.log("number of solution", curList.length);
+    return true;
+}
+
+
+export { autoSolve, checkMove, autoSolveGC, autoSolveRust }

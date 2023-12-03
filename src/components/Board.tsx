@@ -4,7 +4,8 @@ import { LastOperationAtom, MeasuredOperationAtom } from "../store/atoms";
 import { OpTypes } from '../constants/OpTypes';
 import { IBoardElement } from '../constants/IBoardElement';
 import { createBoard } from '../utils/createBoard';
-import { autoSolve, checkMove, autoSolveGC } from "../utils/autoSolve";
+import { autoSolve, checkMove, autoSolveGC, autoSolveRust } from "../utils/autoSolve";
+
 import { arrayToBox, boxToArray, copyBoard, deepCopyBoard } from "../utils/converters";
 
 export const Board: React.FC<{}> = () => {
@@ -22,15 +23,36 @@ export const Board: React.FC<{}> = () => {
         // console.log("last payload:" + lastOps.last_ops)
         var start = window.performance.now();
         console.log("start", start);
-        const res = autoSolveGC(boardState);
+        // const res = autoSolve(boardState);
+        var res = autoSolve(boardState)
         var end = window.performance.now();
         console.log("end", end);
-        console.log("show", JSON.stringify(res));
         setBoardState(res);
+        console.log('board state: '+ JSON.stringify(boardState));
+
         setMeasuredOps({
           measured_ops: lastOps.last_ops,
           compute_time: Math.round(end - start),
         });
+        break;
+      case OpTypes.AUTO_SOLVE_WASM:
+        var start = window.performance.now();
+        console.log("start", start);
+        // const res = autoSolve(boardState);
+        autoSolveRust(boardState).then((res) => {
+          var end = window.performance.now();
+          console.log("end", end);
+          setBoardState(res);
+          console.log('board state: '+ JSON.stringify(boardState));
+
+          setMeasuredOps({
+            measured_ops: lastOps.last_ops,
+            compute_time: Math.round(end - start),
+          });
+        });
+        break;
+      case OpTypes.AUTO_SOLVE_WASM_GC:
+        //TODO add Java with WASM here
         break;
       case OpTypes.HINT_ONE_STEP:
         fillBoard(lastOps.payload);
