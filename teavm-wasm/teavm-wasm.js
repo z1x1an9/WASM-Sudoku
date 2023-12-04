@@ -27,8 +27,11 @@ var Benchmark = function () {
             installImports: installImports.bind(this),
         })
         this.instance = teavm.instance;
+        var start = window.performance.now();
         teavm.main();
+        var end = window.performance.now();
         console.log("after teavm.main()", this.board)
+        return Math.round(end - start);
     };
 
     function installImports(o) {
