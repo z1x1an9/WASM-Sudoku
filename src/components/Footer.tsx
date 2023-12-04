@@ -27,12 +27,12 @@ export const Footer: React.FC<{}> = () => {
         </div>
         <div className='flex  py-2 justify-center'>
           <button className='px-3 py-2 w-fit border-2 rounded-3xl border-sky-500 text-sky-500 hover:bg-sky-500 hover:text-white' onClick={() => setLastOps({ last_ops: OpTypes.AUTO_SOLVE_WASM, payload: [], compute_time: 0, last_pos: [] })}>
-            <span>Auto Solve WASM</span>
+            <span>Auto Solve WASM(Rust)</span>
           </button>
         </div>
         <div className='flex  py-2 justify-center'>
           <button className='px-3 py-2 w-fit border-2 rounded-3xl border-sky-500 text-sky-500 hover:bg-sky-500 hover:text-white' onClick={() => setLastOps({ last_ops: OpTypes.AUTO_SOLVE_WASM_GC, payload: [], compute_time: 0, last_pos: [] })}>
-            <span>Auto Solve WASM-GC</span>
+            <span>Auto Solve WASM(Java)</span>
           </button>
         </div>
       </div>

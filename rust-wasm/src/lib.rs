@@ -13,7 +13,7 @@ pub fn solve_rust(board: JsValue, dim: usize) -> JsValue {
 
     // let cur_list: Vec<Vec<Vec<u32>>> = cur_list.into_serde().unwrap_or_default();
     let mut cur_list: Vec<Vec<Vec<u32>>> = serde_wasm_bindgen::from_value(board.clone()).unwrap();
-    println!("RUST_LOG: {:?}", cur_list);
+    // println!("RUST_LOG: {:?}", cur_list);
     // log_many("cur_list unwrapped: {:?}", cur_list);
     // cur_list[0][0][0] = 9;
     // log_many("cur_list unwrapped changed: {:?}", cur_list);

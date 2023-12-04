@@ -78,23 +78,24 @@ const solve = (board: IBoardElement[][]): boolean => {
     return true
 }
 
-const autoSolveGC = (board: IBoardElement[][]): IBoardElement[][] => {
+const autoSolveGC = (board: IBoardElement[][]): AutoSolveResult => {
     let curBoard = deepCopyBoard(board)
     curBoard = boxToArray(curBoard);
     console.log("Started checking...")
     let check = checkBoard(curBoard)
     console.log("CheckBoard in autoSolve", check);
+    var gc_result = {} as SolveResult
     if (check) {
         console.log("Started solving...")
-        solveGC(curBoard);
+        gc_result = solveGC(curBoard);
         console.log("Finished solving.")
     }
     curBoard = arrayToBox(curBoard);
-    return curBoard;
+    return {board: curBoard, solve_time: gc_result.solve_time};
 }
 
 // BFS
-const solveGC = (board: IBoardElement[][]): boolean => {
+const solveGC = (board: IBoardElement[][]): SolveResult => {
     // prepare the first list
     let curList: number[][][] = [];
     let dim: number = 9;
@@ -110,6 +111,9 @@ const solveGC = (board: IBoardElement[][]): boolean => {
     }
     curList.push(array2D);
     // use BFS to find all solutions
+    // count time here
+    var solve_time = -1;
+    var start = window.performance.now();
     for (let i = 0; i < dim; i++) {
         for (let j = 0; j < dim; j++) {
             if (curList.length > 0) {
@@ -128,13 +132,13 @@ const solveGC = (board: IBoardElement[][]): boolean => {
                 curList = newList;
                 console.log("number of solution", i, j, newList.length);
             } else {
-                return false;
+                return { solved: false, solve_time };;
             }
         }
     }
     // no solution found 
     if (curList.length == 0) {
-        return false;
+        return { solved: false, solve_time };;
     }
     // load the first answer back to board, then return true
     for (let i = 0; i < dim; i++) {
@@ -142,9 +146,11 @@ const solveGC = (board: IBoardElement[][]): boolean => {
             if (board[i][j].element == 0) board[i][j].element = curList[0][i][j];
         }
     }
+    var end = window.performance.now();
+    var solve_time = Math.round(end - start);
     console.log(JSON.stringify(curList[0]));
     console.log("number of solution", curList.length);
-    return true;
+    return { solved: true, solve_time };;
 }
 
 const deepCopy2DNumberArray = (board: number[][]): number[][] => {

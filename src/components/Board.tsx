@@ -27,12 +27,12 @@ export const Board: React.FC<{}> = () => {
         var res = autoSolveGC(boardState);
         var end = window.performance.now();
         console.log("end", end);
-        setBoardState(res);
+        setBoardState(res.board);
         console.log('board state: ' + JSON.stringify(boardState));
         setMeasuredOps({
           measured_ops: lastOps.last_ops,
           compute_time: Math.round(end - start),
-          solving_time: measuredOps.solving_time
+          solving_time: res.solve_time
         });
         break;
       case OpTypes.AUTO_SOLVE_WASM:
