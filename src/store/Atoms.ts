@@ -17,5 +17,6 @@ export const MeasuredOperationAtom = atom({
   default: {
     'measured_ops': OpTypes.NULL,
     'compute_time': 0,
+    'solving_time': 0,
   }
 });
