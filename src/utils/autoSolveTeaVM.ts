@@ -2,25 +2,27 @@ import { IBoardElement } from '../constants/IBoardElement';
 import { createBoard } from './createBoard';
 import { arrayToBox, boxToArray, deepCopyBoard } from "../utils/converters";
 import Benchmark from '../../teavm-wasm/teavm-wasm.js'
+import { AutoSolveResult, SolveResult } from './autoSolve.js';
 
-const autoSolveTeaVM = async (board: IBoardElement[][]): Promise<IBoardElement[][]> => {
+const autoSolveTeaVM = async (board: IBoardElement[][]): Promise<AutoSolveResult> => {
   let curBoard = deepCopyBoard(board)
   curBoard = boxToArray(curBoard);
   console.log("Started checking...")
   let check = checkBoard(curBoard)
   console.log("CheckBoard in autoSolve", check);
+  var solveResult: SolveResult = { solved: false, solve_time: -1 };
   if (check) {
     console.log("Started solving...")
-    var res = await solveTeaVM(curBoard);
-    console.log("Waiting", res);
+    solveResult = await solveTeaVM(curBoard);
+    // console.log("Waiting", res);
     console.log("Finished solving.")
   }
   curBoard = arrayToBox(curBoard);
-  return curBoard;
+  return { board: curBoard, solve_time: solveResult.solve_time };
 }
 
 
-const solveTeaVM = async (board: IBoardElement[][]): Promise<boolean> => {
+const solveTeaVM = async (board: IBoardElement[][]): Promise<SolveResult> => {
   let array2D: number[][] = [];
   let dim: number = 9;
   for (let i = 0; i < dim; i++) {
@@ -33,30 +35,19 @@ const solveTeaVM = async (board: IBoardElement[][]): Promise<boolean> => {
 
   //
   var teaVM_solver = new Benchmark(array2D);
-  await teaVM_solver.load();
+  var solve_time = -1;
+  solve_time = await teaVM_solver.load();
 
   // load the first answer back to board, then return true
   for (let i = 0; i < dim; i++) {
     for (let j = 0; j < dim; j++) {
-      if (array2D[i][j] === 0) return false;
+      if (array2D[i][j] === 0) return { solved: false, solve_time };
       if (board[i][j].element == 0) board[i][j].element = array2D[i][j];
     }
   }
-  return true;
+  return { solved: false, solve_time };
 }
 
-
-// check if the current board has a solution
-const checkMove = (board: IBoardElement[][]): boolean => {
-  let curBoard = deepCopyBoard(board)
-  curBoard = boxToArray(curBoard);
-  console.log("Started checking...")
-  let check = checkBoard(curBoard)
-  console.log("CheckBoard in checkMove", check);
-  if (check) check = solve(curBoard);
-  console.log("Finished checking. ", check);
-  return check;
-}
 
 // check if the input board is valid (no conflict for filled cell), regardless of solution
 const checkBoard = (board: IBoardElement[][]): boolean => {
@@ -91,18 +82,6 @@ const solve = (board: IBoardElement[][]): boolean => {
     }
   }
   return true
-}
-
-const deepCopy2DNumberArray = (board: number[][]): number[][] => {
-  const res: number[][] = [];
-  for (let i = 0; i < 9; i++) {
-    const row: number[] = [];
-    for (let j = 0; j < 9; j++) {
-      row.push(board[i][j]);
-    }
-    res.push(row);
-  }
-  return res;
 }
 
 

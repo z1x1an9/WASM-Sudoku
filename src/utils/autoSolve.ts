@@ -208,7 +208,7 @@ const autoSolveRust = async (board: IBoardElement[][]): Promise<AutoSolveResult>
     var solveResult: SolveResult = { solved: false, solve_time: -1 };
     if (check) {
         console.log("Started solving...")
-        var solveResult = await solveRust(curBoard);
+        solveResult = await solveRust(curBoard);
         console.log("Finished solving.")
     }
     curBoard = arrayToBox(curBoard);
@@ -269,4 +269,4 @@ const solveRust = async (board: IBoardElement[][]): Promise<SolveResult> => {
 }
 
 
-export { autoSolve, checkMove, autoSolveGC, autoSolveRust }
+export { autoSolve, checkMove, autoSolveGC, autoSolveRust, AutoSolveResult, SolveResult }
