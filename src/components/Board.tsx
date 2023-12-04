@@ -5,7 +5,7 @@ import { OpTypes } from '../constants/OpTypes';
 import { IBoardElement } from '../constants/IBoardElement';
 import { createBoard } from '../utils/createBoard';
 import { autoSolve, checkMove, autoSolveGC, autoSolveRust } from "../utils/autoSolve";
-
+import { autoSolveTeaVM } from "../utils/autoSolveTeaVM";
 import { arrayToBox, boxToArray, copyBoard, deepCopyBoard } from "../utils/converters";
 
 export const Board: React.FC<{}> = () => {
@@ -24,15 +24,15 @@ export const Board: React.FC<{}> = () => {
         var start = window.performance.now();
         console.log("start", start);
         // const res = autoSolve(boardState);
-        var res = autoSolve(boardState)
+        var res = autoSolveGC(boardState);
         var end = window.performance.now();
         console.log("end", end);
         setBoardState(res);
-        console.log('board state: '+ JSON.stringify(boardState));
-
+        console.log('board state: ' + JSON.stringify(boardState));
         setMeasuredOps({
           measured_ops: lastOps.last_ops,
           compute_time: Math.round(end - start),
+          solving_time: measuredOps.solving_time
         });
         break;
       case OpTypes.AUTO_SOLVE_WASM:
@@ -42,17 +42,31 @@ export const Board: React.FC<{}> = () => {
         autoSolveRust(boardState).then((res) => {
           var end = window.performance.now();
           console.log("end", end);
-          setBoardState(res);
-          console.log('board state: '+ JSON.stringify(boardState));
-
+          setBoardState(res.board);
+          console.log('board state: ' + JSON.stringify(boardState));
           setMeasuredOps({
             measured_ops: lastOps.last_ops,
             compute_time: Math.round(end - start),
+            solving_time: res.solve_time
           });
         });
         break;
       case OpTypes.AUTO_SOLVE_WASM_GC:
         //TODO add Java with WASM here
+        var start = window.performance.now();
+        console.log("start", start);
+        // const res = autoSolve(boardState);
+        autoSolveTeaVM(boardState).then((res) => {
+          var end = window.performance.now();
+          console.log("end", end);
+          setBoardState(res);
+          console.log('teaVM board state: ' + JSON.stringify(boardState));
+          setMeasuredOps({
+            measured_ops: lastOps.last_ops,
+            compute_time: Math.round(end - start),
+            solving_time: measuredOps.solving_time
+          });
+        });
         break;
       case OpTypes.HINT_ONE_STEP:
         fillBoard(lastOps.payload);

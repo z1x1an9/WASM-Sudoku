@@ -2,6 +2,19 @@ import { IBoardElement } from '../constants/IBoardElement';
 import { createBoard } from './createBoard';
 import { arrayToBox, boxToArray, deepCopyBoard } from "../utils/converters";
 import init, { solve_rust } from '../../rust-wasm/pkg/rust_wasm.js';
+// import { useRecoilState } from 'recoil';
+// import { MeasuredOperationAtom } from '../store/atoms.js';
+
+// const [measuredOps, setMeasuredOps] = useRecoilState(MeasuredOperationAtom);
+type AutoSolveResult = {
+    board: IBoardElement[][];
+    solve_time: number;
+}
+
+type SolveResult = {
+    solved: boolean;
+    solve_time: number;
+}
 
 const autoSolve = (board: IBoardElement[][]): IBoardElement[][] => {
     let curBoard = deepCopyBoard(board)
@@ -186,15 +199,16 @@ const isFilledValid = (board: IBoardElement[][], row: number, col: number): bool
     return true
 }
 
-const autoSolveRust = async (board : IBoardElement[][]) : Promise<IBoardElement[][]> => {
+const autoSolveRust = async (board: IBoardElement[][]): Promise<AutoSolveResult> => {
     let curBoard = deepCopyBoard(board)
     curBoard = boxToArray(curBoard);
     console.log("Started checking...")
     let check = checkBoard(curBoard)
     console.log("CheckBoard in autoSolve", check);
+    var solveResult: SolveResult = { solved: false, solve_time: -1 };
     if (check) {
         console.log("Started solving...")
-        await solveRust(curBoard);
+        var solveResult = await solveRust(curBoard);
         console.log("Finished solving.")
     }
     curBoard = arrayToBox(curBoard);
@@ -202,10 +216,10 @@ const autoSolveRust = async (board : IBoardElement[][]) : Promise<IBoardElement[
     //     // Asynchronous code here
     //     resolve(b)
     //   });
-    return curBoard;
+    return { board: curBoard, solve_time: solveResult.solve_time };
 }
 
-const solveRust = async (board: IBoardElement[][]) : Promise<boolean> => {
+const solveRust = async (board: IBoardElement[][]): Promise<SolveResult> => {
     let curList: number[][][] = [];
     let array2D: number[][] = [];
     let dim: number = 9;
@@ -224,17 +238,24 @@ const solveRust = async (board: IBoardElement[][]) : Promise<boolean> => {
     console.log("wasm inited")
     await init();
     // init().then(() => {
-        console.log('in then')
-        curList = solve_rust(JSON.parse(serializedList), dim) as unknown as number[][][];
-        console.log("returned list: " + curList[0])
+    console.log('in then')
+    var start = window.performance.now();
+    console.log("solving start", start);
+    curList = solve_rust(JSON.parse(serializedList), dim) as unknown as number[][][];
+    var end = window.performance.now();
+    var solve_time = Math.round(end - start);
+    console.log("solving end", end);
+
+
+    console.log("returned list: " + curList[0]);
     //    });
     // curList = solve_rust(JSON.parse(serializedList), dim) as unknown as number[][][];
     // if no solution found 
     console.log('after then')
 
     if (curList.length == 0) {
-        return false; 
-    } 
+        return { solved: false, solve_time };
+    }
 
     // load the first answer back to board, then return true
     for (let i = 0; i < dim; i++) {
@@ -244,7 +265,7 @@ const solveRust = async (board: IBoardElement[][]) : Promise<boolean> => {
     }
     console.log(JSON.stringify(curList[0]));
     console.log("number of solution", curList.length);
-    return true;
+    return { solved: true, solve_time };
 }
 
 
